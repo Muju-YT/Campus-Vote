@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
 """
 
 import os
+import sys
 
 from django.core.wsgi import get_wsgi_application
 
@@ -16,18 +17,37 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'CampusVote.settings')
 application = get_wsgi_application()
 
 # Auto-create superuser on startup
-try:
-    import sys
-    if 'test' not in sys.argv:
+if 'test' not in sys.argv:
+    try:
+        import logging
+        logger = logging.getLogger('django')
         from django.contrib.auth import get_user_model
+        from django.db import transaction, IntegrityError
         User = get_user_model()
-        if not User.objects.filter(is_superuser=True).exists():
-            User.objects.create_superuser(
-                username='Admin',
-                email='Admin@gmail.com',
-                password='Admin@1234',
-                role='admin'
-            )
-            print(">>> Auto-created superuser 'Admin'")
-except Exception as e:
-    print(f">>> Superuser auto-creation skipped: {e}")
+        
+        # Check if user with username 'Admin' already exists
+        if User.objects.filter(username='Admin').exists():
+            msg = "Superuser Admin already exists"
+            print(msg, flush=True)
+            logger.info(msg)
+        else:
+            try:
+                with transaction.atomic():
+                    User.objects.create_superuser(
+                        username='Admin',
+                        email='Admin@gmail.com',
+                        password='Admin@1234',
+                        role='admin'
+                    )
+                msg = "Superuser Admin created successfully"
+                print(msg, flush=True)
+                logger.info(msg)
+            except IntegrityError:
+                # Handle race condition where another Gunicorn worker created it simultaneously
+                msg = "Superuser Admin already exists"
+                print(msg, flush=True)
+                logger.info(msg)
+    except Exception as e:
+        msg = f"Superuser Admin creation failed: {e}"
+        print(msg, flush=True)
+        logger.error(msg)
