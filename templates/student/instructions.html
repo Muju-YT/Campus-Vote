@@ -1,0 +1,141 @@
+{% extends "student/base.html" %}
+{% load static %}
+
+{% block title %}Instructions & Guidelines - CampusVote{% endblock %}
+
+{% block content %}
+<div class="instructions-container container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-10 mx-auto text-center py-3">
+            <h2 class="fw-bold text-dark"><i class="fas fa-book-open text-primary me-2"></i>Voting Guidelines & Instructions</h2>
+            <p class="text-muted fs-5">Please read the following guidelines carefully to ensure a smooth, secure, and compliant election process.</p>
+        </div>
+    </div>
+
+    <!-- Rules Grid -->
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            <!-- Security & Compliance Alert -->
+            <div class="alert alert-warning border border-warning-subtle shadow-sm mb-4 d-flex align-items-start p-4">
+                <i class="fas fa-exclamation-triangle fa-2x text-warning me-3 mt-1"></i>
+                <div>
+                    <h5 class="fw-bold text-dark mb-1">Strict Election Compliance Reminder</h5>
+                    <p class="text-muted mb-0 small">CampusVote enforces a strict **one-student, one-vote** policy. Any attempts to manipulate credentials, bypass session controls, or cast duplicate ballots are automatically logged in the system audit logs and will lead to immediate disciplinary proceedings by the college election committee.</p>
+                </div>
+            </div>
+
+            <!-- Steps Grid -->
+            <div class="card border-0 shadow-sm glass-card p-4 mb-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-dark mb-4"><i class="fas fa-tasks text-primary me-2"></i>How to Cast Your Ballot</h4>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="step-card p-3 rounded border">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">1</span>
+                                    <h5 class="fw-bold text-dark mb-0">Select an Election</h5>
+                                </div>
+                                <p class="text-muted small mb-0">Navigate to the **Cast Ballot** menu. Under the active elections list, select the specific department or general student election you wish to vote in.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="step-card p-3 rounded border">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">2</span>
+                                    <h5 class="fw-bold text-dark mb-0">Review Candidates</h5>
+                                </div>
+                                <p class="text-muted small mb-0">Examine candidate cards. Click **Read Manifesto** to evaluate each candidate's plan, experience, and academic goals before casting your vote.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="step-card p-3 rounded border">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">3</span>
+                                    <h5 class="fw-bold text-dark mb-0">Confirm & Submit</h5>
+                                </div>
+                                <p class="text-muted small mb-0">Click **Cast Vote** on your chosen candidate. A secure modal will display to confirm your selection. Verify details carefully and click submit.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="step-card p-3 rounded border">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">4</span>
+                                    <h5 class="fw-bold text-dark mb-0">Retain Your Receipt</h5>
+                                </div>
+                                <p class="text-muted small mb-0">Upon successful submission, the system generates a secure cryptographic transaction receipt. You can print or download this receipt under the **Vote Status** menu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frequently Asked Questions -->
+            <div class="card border-0 shadow-sm glass-card p-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-dark mb-4"><i class="fas fa-question-circle text-primary me-2"></i>Frequently Asked Questions</h4>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3 bg-transparent">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-dark bg-light rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Is my vote completely anonymous?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted small">
+                                    Yes. CampusVote enforces a strict separation between voter registry information and ballot data. The receipt hash produced is generated using one-way cryptographic functions that allow verifying your ballot was counted, without exposing your candidate choice in the database.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 bg-transparent">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-dark bg-light rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Can I change my vote after submitting?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted small">
+                                    No. To preserve absolute integrity and prevent vote manipulation, once a ballot is confirmed and recorded in the database, it is immutable and cannot be edited, recalled, or deleted under any circumstances.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 bg-transparent">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold text-dark bg-light rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    What should I do if I encounter an error?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted small">
+                                    If the system encounters an issue, do not attempt to refresh repeatedly. Immediately contact your department head or the official student election commission desk at `support@campusvote.edu` with your student registry ID and a screenshot of the error.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border-radius: 12px;
+    }
+    .step-card {
+        border-color: rgba(0, 0, 0, 0.08) !important;
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
+{% endblock %}

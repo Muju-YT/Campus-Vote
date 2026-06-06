@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Election Results - CampusVote{% endblock %}
+
+{% block content %}
+<div class="results-container py-5" style="padding-top: 100px !important;">
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="row mb-5">
+            <div class="col-md-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3 text-dark"><i class="fas fa-poll text-primary me-2"></i>Election Results Center</h1>
+                <p class="lead text-secondary">View live ballot tallies for active campaigns and audited final outcomes for completed college elections.</p>
+            </div>
+        </div>
+
+        {% if election_results %}
+            <div class="row g-4">
+                {% for result in election_results %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="card border-0 shadow-sm glass-card h-100 position-relative overflow-hidden p-4">
+                            <div class="card-body d-flex flex-column h-100">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h3 class="fw-bold text-dark mb-1">{{ result.election.title }}</h3>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary border px-3 py-1 mt-1">Completed</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="small text-muted d-block text-uppercase font-monospace" style="font-size: 0.75rem;">Total Ballots Cast</span>
+                                        <strong class="text-primary fs-4">{{ result.total_votes }}</strong>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-secondary small mb-4">{{ result.election.description|default:"No description provided for this election campaign." }}</p>
+                                
+                                <hr class="my-3">
+
+                                <!-- Declared Winner Box -->
+                                {% if result.winner %}
+                                    <div class="winner-alert p-3 rounded mb-4 d-flex align-items-center border" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2) !important;">
+                                        <div class="bg-success text-white rounded-circle p-3 d-flex align-items-center justify-content-center me-3 shadow" style="width: 50px; height: 50px; background: var(--brand-primary-gradient) !important;">
+                                            <i class="fas fa-trophy fa-lg text-white"></i>
+                                        </div>
+                                        <div>
+                                            <small class="text-success text-uppercase fw-bold font-monospace d-block" style="font-size: 0.75rem;">Declared Winner</small>
+                                            <h5 class="fw-bold text-dark mb-0">{{ result.winner.name }}</h5>
+                                            <small class="text-muted">{{ result.winner.position }} | {{ result.winner.department }}</small>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <!-- Candidates Shares List -->
+                                <h5 class="fw-bold text-dark mb-3">Ballot Share Breakdown</h5>
+                                <div class="d-flex flex-column gap-3">
+                                    {% for cand in result.candidates %}
+                                        <div>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <div class="small fw-semibold text-dark d-flex align-items-center">
+                                                    {% if cand.photo %}
+                                                        <img src="{{ cand.photo.url }}" class="rounded-circle me-2 border" width="24" height="24" style="object-fit: cover;">
+                                                    {% else %}
+                                                        <img src="https://randomuser.me/api/portraits/men/22.jpg" class="rounded-circle me-2" width="24" height="24">
+                                                    {% endif %}
+                                                    {{ cand.name }} <span class="text-muted font-normal ms-1">({{ cand.position }})</span>
+                                                </div>
+                                                <strong class="text-dark small">{{ cand.vote_count }} <span class="text-muted font-normal small">Votes</span></strong>
+                                            </div>
+                                            <div class="progress animate-bar" style="height: 8px; border-radius: 4px;">
+                                                <div class="progress-bar {% if cand == result.winner %}bg-success{% else %}bg-primary{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {% if result.total_votes > 0 %}{% widthratio cand.vote_count result.total_votes 100 %}{% else %}0{% endif %}%"></div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="row">
+                <div class="col-md-6 mx-auto text-center py-5">
+                    <div class="card border-0 shadow-sm glass-card p-5">
+                        <i class="fas fa-poll-h fa-3x text-muted mb-3"></i>
+                        <h4 class="fw-bold text-dark mb-2">No Audited Outcomes Available</h4>
+                        <p class="text-secondary mb-4">Active and scheduled elections are currently in progress. As soon as a voting campaign closes, final voter audited shares will compile and publish here automatically.</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{% url 'voting_app:home' %}" class="btn-premium"><i class="fas fa-home me-1"></i> Home Page</a>
+                            <a href="{% url 'voting_app:login' %}" class="btn-premium-outline"><i class="fas fa-sign-in-alt me-1"></i> Student Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Reveal animated charts using GSAP
+    document.addEventListener('DOMContentLoaded', function() {
+        gsap.from('.progress-bar', {
+            width: 0,
+            duration: 1.2,
+            stagger: 0.1,
+            ease: 'power3.out'
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "student/base.html" %}
+{% load static %}
+
+{% block title %}My Profile - CampusVote{% endblock %}
+
+{% block content %}
+<div class="profile-container container-fluid">
+    <div class="row">
+        <!-- Left Panel: Profile Detail Overview -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm glass-card text-center p-4">
+                <div class="card-body">
+                    <!-- Photo frame preview -->
+                    <div class="avatar-upload-frame mx-auto mb-3 position-relative rounded-circle overflow-hidden border border-4 border-primary shadow" style="width: 130px; height: 130px;">
+                        {% if student.profile_photo %}
+                            <img id="profilePreviewImg" src="{{ student.profile_photo.url }}" alt="Profile Photo" class="w-100 h-100" style="object-fit: cover;">
+                        {% else %}
+                            <img id="profilePreviewImg" src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Profile Photo" class="w-100 h-100" style="object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    
+                    <h4 class="fw-bold text-dark mb-1">{{ student.user.full_name|default:student.user.email }}</h4>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-2 border border-primary-subtle">{{ student.department }}</span>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 mb-2 ms-1 border border-secondary-subtle">{{ student.year }}</span>
+                    
+                    <hr class="my-4 border-color">
+                    
+                    <div class="text-start">
+                        <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size: 0.7rem;">Registry ID</label>
+                        <p class="text-dark fw-semibold mb-3">{{ student.student_id }}</p>
+                        
+                        <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size: 0.7rem;">Email Address</label>
+                        <p class="text-dark fw-semibold mb-3">{{ student.user.email }}</p>
+                        
+                        <label class="small text-muted text-uppercase fw-bold mb-1" style="font-size: 0.7rem;">Registry Join Date</label>
+                        <p class="text-dark fw-semibold mb-0">{{ student.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Profile configurations and passwords -->
+        <div class="col-lg-8">
+            <!-- Details update form -->
+            <div class="card border-0 shadow-sm glass-card p-4 mb-4">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold mb-4 text-dark"><i class="fas fa-user-edit text-primary me-2"></i>Update Registry details</h4>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_full_name" class="form-label fw-semibold text-secondary small">Full Name</label>
+                                <input type="text" class="form-control form-input-custom" id="id_full_name" name="full_name" value="{{ student.user.full_name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_year" class="form-label fw-semibold text-secondary small">Academic Year</label>
+                                <select class="form-select form-input-custom" id="id_year" name="year">
+                                    <option value="1st Year" {% if student.year == '1st Year' %}selected{% endif %}>1st Year</option>
+                                    <option value="2nd Year" {% if student.year == '2nd Year' %}selected{% endif %}>2nd Year</option>
+                                    <option value="3rd Year" {% if student.year == '3rd Year' %}selected{% endif %}>3rd Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="id_profile_photo" class="form-label fw-semibold text-secondary small">Voter profile picture</label>
+                            <input type="file" class="form-control form-input-custom" id="id_profile_photo" name="profile_photo" accept="image/*">
+                            <small class="text-muted mt-1 d-block">Upload a formal passport-size photo to authenticate your ballot entries.</small>
+                        </div>
+                        <button type="submit" class="btn-premium px-4"><i class="fas fa-save me-1"></i> Save Configurations</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password update form -->
+            <div class="card border-0 shadow-sm glass-card p-4 mb-4">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold mb-4 text-dark"><i class="fas fa-key text-primary me-2"></i>Credential Security Settings</h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="change_password" value="1">
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label fw-semibold text-secondary small">Current Password</label>
+                            <input type="password" class="form-control form-input-custom" id="current_password" name="current_password" required placeholder="••••••••">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="new_password" class="form-label fw-semibold text-secondary small">New Password</label>
+                                <input type="password" class="form-control form-input-custom" id="new_password" name="new_password" required placeholder="••••••••">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label fw-semibold text-secondary small">Confirm Password</label>
+                                <input type="password" class="form-control form-input-custom" id="confirm_password" name="confirm_password" required placeholder="••••••••">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-premium px-4"><i class="fas fa-lock me-1"></i> Update Security Credentials</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Registry Log History -->
+            <div class="card border-0 shadow-sm glass-card p-4">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold mb-4 text-dark"><i class="fas fa-history text-primary me-2"></i>Auditable Voter Registry Log</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-muted">
+                                    <th>Election Name</th>
+                                    <th>Casted Date</th>
+                                    <th>Secure Stamp Code</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vote in votes %}
+                                    <tr>
+                                        <td class="fw-bold text-dark">{{ vote.election.title }}</td>
+                                        <td>{{ vote.timestamp|date:"M d, Y P" }}</td>
+                                        <td>
+                                            <code class="small text-primary font-monospace">sha256-{{ student.id }}x{{ vote.candidate.id }}e{{ vote.election.id }}</code>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-3 text-muted">No secure logs found in history logs.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Live photo preview change handler
+    document.getElementById('id_profile_photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profilePreviewImg').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %}

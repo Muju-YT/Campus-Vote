@@ -1,0 +1,230 @@
+{% extends "student/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Header Widget -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm glass-card position-relative overflow-hidden p-4">
+                <div class="welcome-gradient-bg" style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(37, 99, 235, 0.08) 100%); z-index:-1;"></div>
+                <div class="card-body position-relative z-1">
+                    <h2 class="fw-bold text-dark mb-1">Welcome back, {{ student.user.full_name|default:student.user.email }}</h2>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 mt-2">
+                        <i class="fas fa-university me-1"></i> {{ student.department }}
+                    </span>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle px-3 py-2 mt-2 ms-2">
+                        <i class="fas fa-calendar-alt me-1"></i> {{ student.year }}
+                    </span>
+                    <p class="text-muted small mt-3 mb-0">Secure voter registry active. View open ballots, review candidate profiles, and browse your signed receipts below.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards Row -->
+    <div class="row mb-4">
+        <!-- Stats Card 1 -->
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100 glass-card text-center py-4">
+                <div class="widget-icon-box bg-primary bg-opacity-10 text-primary mx-auto mb-3" style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-file-invoice-vote fa-lg"></i>
+                </div>
+                <h6 class="text-muted small text-uppercase mb-1">Total Campaigns</h6>
+                <h3 class="fw-bold text-dark mb-0">{{ all_elections.count }}</h3>
+            </div>
+        </div>
+        <!-- Stats Card 2 -->
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100 glass-card text-center py-4">
+                <div class="widget-icon-box bg-success bg-opacity-10 text-success mx-auto mb-3" style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-vote-yea fa-lg"></i>
+                </div>
+                <h6 class="text-muted small text-uppercase mb-1">Active Ballots</h6>
+                <h3 class="fw-bold text-dark mb-0">{{ active_elections.count }}</h3>
+            </div>
+        </div>
+        <!-- Stats Card 3 -->
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100 glass-card text-center py-4">
+                <div class="widget-icon-box bg-secondary bg-opacity-10 text-secondary mx-auto mb-3" style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-poll-h fa-lg"></i>
+                </div>
+                <h6 class="text-muted small text-uppercase mb-1">Completed</h6>
+                <h3 class="fw-bold text-dark mb-0">{{ completed_count }}</h3>
+            </div>
+        </div>
+        <!-- Stats Card 4 -->
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100 glass-card text-center py-4">
+                <div class="widget-icon-box bg-warning bg-opacity-10 text-warning mx-auto mb-3" style="width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-check-circle fa-lg"></i>
+                </div>
+                <h6 class="text-muted small text-uppercase mb-1">Votes Submitted</h6>
+                <h3 class="fw-bold text-dark mb-0">{{ votes_cast_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Ballots & Security Stats -->
+    <div class="row mb-4">
+        <!-- Available ballots list -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm h-100 glass-card p-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-dark mb-4"><i class="fas fa-hourglass-half text-primary me-2"></i>Active Ballots</h4>
+                    
+                    {% if active_elections %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for election in active_elections %}
+                                <div class="p-3 border border-color rounded-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center hover-scale" style="background: rgba(255, 255, 255, 0.02);">
+                                    <div>
+                                        <h5 class="fw-bold text-dark mb-1">{{ election.title }}</h5>
+                                        <p class="text-muted small mb-2 mb-sm-0">{{ election.description|truncatewords:15 }}</p>
+                                        <span class="badge bg-light text-primary border border-primary-subtle me-2">
+                                            <i class="far fa-clock me-1"></i> Closes: {{ election.end_date|date:"M d, P" }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-3 mt-sm-0 d-flex align-items-center gap-3">
+                                        <div class="countdown-timer text-center bg-dark text-white rounded px-3 py-1 small" data-countdown="{{ election.end_date|date:'Y-m-d H:i:s' }}">
+                                            Loading...
+                                        </div>
+                                        <a href="{% url 'voting_app:vote' %}" class="btn-premium btn-sm px-3">
+                                            Open Ballot <i class="fas fa-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-file-invoice-vote fa-3x mb-3" style="opacity: 0.5;"></i>
+                            <h5>No active voting campaigns are scheduled at this time.</h5>
+                            <p class="small mb-0">Verify election schedules or guidelines below.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Security and checklist details -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100 glass-card p-4">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <div class="bg-primary bg-opacity-10 text-primary mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark">Double Voting Block</h4>
+                    <p class="text-muted small mb-3">Your ballot choices are encrypted and mapped directly to unique database indexes to prevent manipulation.</p>
+                    <div class="p-3 bg-light rounded text-start mb-3 border text-secondary small">
+                        <div><i class="fas fa-check text-success me-2"></i> Relational MySQL index enforced.</div>
+                        <div class="mt-2"><i class="fas fa-check text-success me-2"></i> CSRF request parameters active.</div>
+                        <div class="mt-2"><i class="fas fa-check text-success me-2"></i> Single-vote constraint validated.</div>
+                    </div>
+                    <a href="{% url 'voting_app:instructions' %}" class="btn-premium-outline btn-sm"><i class="fas fa-info-circle me-1"></i> Review Rules</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Election history lists -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm glass-card p-4">
+                <div class="card-body">
+                    <h4 class="fw-bold text-dark mb-4"><i class="fas fa-history text-primary me-2"></i>Election Registry Log History</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr class="text-muted">
+                                    <th>Election Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Ballot Result</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for election in all_elections %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold text-dark">{{ election.title }}</div>
+                                            <small class="text-muted">{{ election.description|truncatewords:8 }}</small>
+                                        </td>
+                                        <td>{{ election.start_date|date:"M d, Y P" }}</td>
+                                        <td>{{ election.end_date|date:"M d, Y P" }}</td>
+                                        <td>
+                                            {% if election.computed_status == 'Active' %}
+                                                <span class="badge bg-success bg-opacity-10 text-success"><i class="fas fa-circle me-1 small"></i>Active</span>
+                                            {% elif election.computed_status == 'Completed' %}
+                                                <span class="badge bg-secondary bg-opacity-10 text-secondary">Completed</span>
+                                            {% else %}
+                                                <span class="badge bg-info bg-opacity-10 text-info">Upcoming</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if election.computed_status == 'Completed' %}
+                                                <a href="{% url 'voting_app:results' %}" class="btn-premium-outline btn-sm px-3">
+                                                    <i class="fas fa-chart-pie me-1"></i> Results
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted small">Not Audited</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4 text-muted">No election campaign records in database.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Live countdown timer script
+    document.addEventListener('DOMContentLoaded', function() {
+        const timers = document.querySelectorAll('[data-countdown]');
+        
+        timers.forEach(element => {
+            const rawDateStr = element.getAttribute('data-countdown').replace(/-/g, "/");
+            const endTime = new Date(rawDateStr).getTime();
+
+            const interval = setInterval(function() {
+                const now = new Date().getTime();
+                const diff = endTime - now;
+
+                if (diff < 0) {
+                    clearInterval(interval);
+                    element.innerHTML = "Closed";
+                    element.className = "countdown-timer text-center bg-danger text-white rounded px-3 py-1 small";
+                } else {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    element.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }
+            }, 1000);
+        });
+    });
+</script>
+<style>
+    .hover-scale {
+        transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .hover-scale:hover {
+        background: rgba(79, 70, 229, 0.02) !important;
+        border-color: rgba(79, 70, 229, 0.25) !important;
+        transform: scale(1.003);
+    }
+</style>
+{% endblock %}
+{% endblock %}

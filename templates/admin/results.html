@@ -1,0 +1,166 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Election Results Center - CampusVote{% endblock %}
+
+{% block content %}
+<div class="admin-results container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fas fa-poll text-primary me-2"></i>Election Results Center</h2>
+            <p class="text-muted small mb-0">Review active ballot progress, public counters, and winner declarations.</p>
+        </div>
+        <button class="btn-premium-outline py-2 px-4 shadow" onclick="window.print()">
+            <i class="fas fa-print me-2"></i> Print Ballot Share
+        </button>
+    </div>
+
+    <!-- Campaign Selector Card -->
+    <div class="card border-0 shadow-sm glass-card mb-4 p-4">
+        <form method="get" class="row align-items-center g-3">
+            <div class="col-md-8">
+                <label for="election_id" class="form-label fw-semibold text-dark">Select Election Campaign</label>
+                <select name="election_id" id="election_id" class="form-select" onchange="this.form.submit()">
+                    {% for elec in all_elections %}
+                        <option value="{{ elec.id }}" {% if selected_election.id == elec.id %}selected{% endif %}>
+                            {{ elec.title }} ({{ elec.computed_status }})
+                        </option>
+                    {% empty %}
+                        <option value="">No elections recorded yet</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end justify-content-md-end">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2">
+                    <i class="fas fa-info-circle me-2"></i>Status: {{ selected_election.computed_status }}
+                </span>
+            </div>
+        </form>
+    </div>
+
+    {% if selected_election %}
+        <!-- Stats Summary Header -->
+        <div class="card border-0 shadow-sm glass-card mb-4 p-4">
+            <div class="row align-items-center text-center text-md-start">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <h3 class="fw-bold text-dark mb-1">{{ selected_election.title }}</h3>
+                    <p class="text-muted mb-0 small">{{ selected_election.description|default:"No description provided for this election campaign." }}</p>
+                </div>
+                <div class="col-md-3 mb-3 mb-md-0 border-start-md px-4">
+                    <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.75rem;">Voting Period</small>
+                    <span class="fw-semibold text-dark d-block mb-1">{{ selected_election.start_date|date:"M d" }} - {{ selected_election.end_date|date:"M d, Y" }}</span>
+                </div>
+                <div class="col-md-3 border-start-md px-4">
+                    <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 0.75rem;">Total Ballots Cast</small>
+                    <span class="fw-bold text-primary fs-3 d-block">{{ total_votes }} <span class="fs-6 text-muted font-monospace">Votes</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Panel: Winner Declaration Card -->
+            <div class="col-lg-5 mb-4">
+                <div class="card border-0 shadow-sm glass-card h-100 winner-card position-relative overflow-hidden text-center p-4">
+                    <div class="winner-gradient-bg" style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(239, 68, 68, 0.05) 100%); z-index:-1;"></div>
+                    <div class="card-body position-relative z-1 d-flex flex-column justify-content-center">
+                        <div class="trophy-frame mx-auto mb-4 bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 80px; height: 80px;">
+                            <i class="fas fa-trophy fa-2x"></i>
+                        </div>
+                        
+                        {% if winner %}
+                            <h5 class="text-muted text-uppercase small fw-bold mb-2" style="font-size: 0.7rem; letter-spacing: 1px;">Declared Winner</h5>
+                            <div class="avatar-frame mx-auto mb-3 rounded-circle overflow-hidden border border-4 border-warning shadow" style="width: 120px; height: 120px;">
+                                {% if winner.photo %}
+                                    <img src="{{ winner.photo.url }}" alt="{{ winner.name }}" class="w-100 h-100" style="object-fit: cover;">
+                                {% else %}
+                                    <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Photo" class="w-100 h-100">
+                                {% endif %}
+                            </div>
+                            <h3 class="fw-bold text-dark mb-1">{{ winner.name }}</h3>
+                            <span class="badge bg-light text-primary border border-primary-subtle px-3 py-2 mb-3">{{ winner.position }}</span>
+                            
+                            <div class="p-3 bg-light rounded text-start border mt-2">
+                                <div class="d-flex justify-content-between small text-muted mb-2">
+                                    <span>Voter share:</span>
+                                    <strong class="text-success">{{ winner.votes.count }} Votes</strong>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>Department:</span>
+                                    <strong class="text-dark">{{ winner.department }}</strong>
+                                </div>
+                            </div>
+                        {% else %}
+                            <h4 class="fw-bold text-muted mb-2">No Winner Declared</h4>
+                            <p class="text-muted small mb-0">No ballots have been registered in this campaign or the polls are still active.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Vote Shares Lists & Bar Metrics -->
+            <div class="col-lg-7 mb-4">
+                <div class="card border-0 shadow-sm glass-card h-100 p-4">
+                    <h4 class="fw-bold text-dark mb-4"><i class="fas fa-chart-pie text-primary me-2"></i>Ballot Share Breakdown</h4>
+                    
+                    <div class="d-flex flex-column gap-4">
+                        {% for item in candidates_data %}
+                            <div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        {% if item.candidate.photo %}
+                                            <img src="{{ item.candidate.photo.url }}" alt="Photo" class="rounded-circle border border-primary border-opacity-25" width="30" height="30" style="object-fit: cover;">
+                                        {% else %}
+                                            <img src="https://randomuser.me/api/portraits/lego/1.jpg" class="rounded-circle" width="30" height="30">
+                                        {% endif %}
+                                        <span class="fw-bold text-dark">{{ item.candidate.name }}</span>
+                                        <span class="small text-muted">({{ item.candidate.position }})</span>
+                                    </div>
+                                    <span class="fw-bold text-primary">{{ item.votes }} <span class="small text-muted font-monospace">({{ item.percentage }}%)</span></span>
+                                </div>
+                                <div class="progress" style="height: 10px; background-color: var(--border-color);">
+                                    <div class="progress-bar {% if forloop.first %}bg-success{% else %}bg-primary{% endif %}" 
+                                         role="progressbar" 
+                                         style="width: {{ item.percentage }}%; border-radius: 5px;" 
+                                         aria-valuenow="{{ item.percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-chart-bar fa-3x mb-3" style="opacity: 0.5;"></i>
+                                <p class="small mb-0">No ballot configurations found for this election.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-6 mx-auto text-center py-5">
+                <div class="card border-0 shadow-sm glass-card p-5">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h4 class="fw-bold text-dark mb-2">No Elections Active</h4>
+                    <p class="text-muted">Create election campaigns and register candidates first to review results.</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .border-start-md {
+        border-left: 1px solid var(--border-color);
+    }
+    @media (max-width: 767px) {
+        .border-start-md {
+            border-left: none;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+    }
+</style>
+{% endblock %}

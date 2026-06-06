@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}System Settings - CampusVote{% endblock %}
+
+{% block content %}
+<div class="admin-settings container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark mb-1"><i class="fas fa-cog text-primary me-2"></i>System Settings</h2>
+            <p class="text-muted small">Configure security variables, manage system backups, and review college voting boundaries.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Settings Form Columns -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm glass-card p-4">
+                <h4 class="fw-bold text-dark mb-4"><i class="fas fa-shield-alt text-primary me-2"></i>Election Security Configurations</h4>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <!-- Config 1 -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark mb-1">Double Voting Prevention Engine</label>
+                        <div class="p-3 bg-light rounded border text-dark">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="double_voting_prevention" checked disabled>
+                                <label class="form-check-label fw-semibold" for="double_voting_prevention">Enforce SHA-256 ballot checksums and database constraints</label>
+                            </div>
+                            <small class="text-muted d-block mt-2">Guarantees that a student can cast at most one ballot per election. Locked on by system architecture.</small>
+                        </div>
+                    </div>
+
+                    <!-- Config 2 -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark mb-1">Voter Registration Policy</label>
+                        <div class="p-3 bg-light rounded border text-dark">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="registration_policy" id="policy_manual" checked>
+                                <label class="form-check-label fw-semibold" for="policy_manual">Require administrative approval for new student signups</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="radio" name="registration_policy" id="policy_auto">
+                                <label class="form-check-label fw-semibold" for="policy_auto">Auto-approve student accounts matching official domain patterns</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Config 3 -->
+                    <div class="mb-4">
+                        <label for="institution_domain" class="form-label fw-bold text-dark">Institution Domain Limit</label>
+                        <input type="text" class="form-control" id="institution_domain" value="college.edu" placeholder="college.edu">
+                        <small class="text-muted d-block mt-1">Limits registrations to official student email boundaries.</small>
+                    </div>
+
+                    <button type="submit" class="btn-premium px-4 py-2"><i class="fas fa-check-circle me-2"></i> Update Configuration</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Backups & Logs -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm glass-card p-4 mb-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-cloud-download-alt text-primary me-2"></i>Database Backups</h5>
+                <p class="text-muted small">Generate complete dumps of student records, candidate fields, and casted vote audits.</p>
+                <div class="d-grid gap-2">
+                    <button class="btn-premium-outline btn-sm text-start py-2" onclick="alert('Backup dump generated successfully! (Mock)')"><i class="fas fa-file-archive me-2"></i> Backup MySQL DB</button>
+                    <button class="btn-premium-outline btn-sm text-start py-2" onclick="alert('Audit logs exported! (Mock)')"><i class="fas fa-file-alt me-2"></i> Export Audit Trail</button>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm glass-card p-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="fas fa-info-circle text-primary me-2"></i>System Version</h5>
+                <div class="p-3 bg-light rounded border text-muted small font-monospace">
+                    <div>CampusVote: v1.8.2-stable</div>
+                    <div class="mt-2">Django: v5.2.4</div>
+                    <div class="mt-2">Database: MySQL (Localhost)</div>
+                    <div class="mt-2">Environment: Development venv</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

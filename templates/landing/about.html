@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - CampusVote{% endblock %}
+
+{% block content %}
+<section class="py-5" style="padding-top: 100px !important;">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold text-dark mb-4 animate-fade-up">Our Mission</h1>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <p class="lead text-secondary mb-5 animate-fade-up-delayed">
+                    CampusVote was built to revolutionize college elections. By leveraging robust database schemas, secure role-based authorizations, and responsive visual systems, we offer a transparent ecosystem where every single vote counts, securely and anonymized.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Technology Cards -->
+        <h3 class="fw-bold text-dark mt-5 mb-4">Under the Hood</h3>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card p-4">
+                    <h5 class="fw-bold text-primary mb-2"><i class="fas fa-lock me-2"></i>Django Framework</h5>
+                    <p class="text-secondary small mb-0">Powers role-based authorization, session security controls, and strict CSRF request validation.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card p-4">
+                    <h5 class="fw-bold text-primary mb-2"><i class="fas fa-database me-2"></i>MySQL Schema</h5>
+                    <p class="text-secondary small mb-0">Enforces structural integrity, relational constraints, and unique indexes to prevent double voting.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card p-4">
+                    <h5 class="fw-bold text-primary mb-2"><i class="fas fa-magic me-2"></i>SaaS Aesthetics</h5>
+                    <p class="text-secondary small mb-0">Uses HSL variable scopes, collapsible overlay wrappers, and GSAP timeline animation reveals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

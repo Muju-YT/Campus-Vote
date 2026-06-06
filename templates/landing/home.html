@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Premium Hero Section -->
+<section class="landing-hero d-flex align-items-center">
+    <div class="container position-relative z-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 text-center">
+                <h1 class="hero-headline text-dark fw-bold animate-fade-up">
+                    Democratic Voices,<br>
+                    <span class="text-gradient-primary">Securely Compiled.</span>
+                </h1>
+                <p class="hero-subhead fs-5 animate-fade-up-delayed">
+                    CampusVote brings Stripe-level security, persistent theme customizations, and real-time Chart.js compilations to college elections. Secure your ballot today.
+                </p>
+                <div class="d-flex justify-content-center gap-3 animate-fade-up-delayed-2">
+                    <a href="{% url 'voting_app:register' %}" class="btn-premium py-3 px-4"><i class="fas fa-user-plus me-2"></i> Register Voter Account</a>
+                    <a href="{% url 'voting_app:login' %}" class="btn-premium-outline py-3 px-4"><i class="fas fa-sign-in-alt me-2"></i> Sign In to Ballot</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Statistics counters -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm glass-card stat-counter-card">
+                    <div class="stat-number text-gradient-primary">{{ total_students }}</div>
+                    <div class="text-secondary small fw-semibold text-uppercase">Registered Voters</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm glass-card stat-counter-card">
+                    <div class="stat-number text-gradient-primary">{{ active_elections }}</div>
+                    <div class="text-secondary small fw-semibold text-uppercase">Active Ballots</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm glass-card stat-counter-card">
+                    <div class="stat-number text-gradient-primary">{{ completed_elections }}</div>
+                    <div class="text-secondary small fw-semibold text-uppercase">Completed Runs</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card border-0 shadow-sm glass-card stat-counter-card">
+                    <div class="stat-number text-gradient-primary">{{ total_votes_cast }}</div>
+                    <div class="text-secondary small fw-semibold text-uppercase">Total Votes Cast</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Grid -->
+<section class="feature-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark fs-1 mb-2">Designed for High-Integrity Elections</h2>
+            <p class="text-secondary max-width-600 mx-auto">Explore the security metrics and real-time services built directly into CampusVote.</p>
+        </div>
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">MySQL Relational Guard</h4>
+                    <p class="text-secondary small mb-0">Enforces double-voting blocks at the MySQL database engine level, making voting manipulations physically impossible.</p>
+                </div>
+            </div>
+            <!-- Feature 2 -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">Fetch AJAX ballot engine</h4>
+                    <p class="text-secondary small mb-0">Processes voting transactions asynchronously using the Fetch API, rendering confirmation receipts without page reloading.</p>
+                </div>
+            </div>
+            <!-- Feature 3 -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm glass-card feature-card">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">Live Chart.js breakdown</h4>
+                    <p class="text-secondary small mb-0">Computes candidate vote counts, percentage shares, and department participation in real-time administrative dashboards.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it Works section -->
+<section class="timeline-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark fs-1 mb-2">Step-by-Step Voting Pipeline</h2>
+            <p class="text-secondary max-width-600 mx-auto">Learn how simple it is to cast your ballot and verify your election results.</p>
+        </div>
+        
+        <div class="step-timeline">
+            <!-- Step 1 -->
+            <div class="timeline-step active">
+                <div class="timeline-step-badge">1</div>
+                <div class="card border-0 shadow-sm glass-card timeline-step-content">
+                    <h5 class="fw-bold text-dark mb-1">Verify Academic Registry</h5>
+                    <p class="text-secondary small mb-0">Register your profile using your college student ID and department details. Registry approvals are verified manually by admins.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="timeline-step">
+                <div class="timeline-step-badge">2</div>
+                <div class="card border-0 shadow-sm glass-card timeline-step-content">
+                    <h5 class="fw-bold text-dark mb-1">Review Candidate Manifestos</h5>
+                    <p class="text-secondary small mb-0">Sign in to your dashboard to review open ballots, browse candidate profiles, and evaluate their manifestos.</p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="timeline-step">
+                <div class="timeline-step-badge">3</div>
+                <div class="card border-0 shadow-sm glass-card timeline-step-content">
+                    <h5 class="fw-bold text-dark mb-1">Secure Ballot Casting</h5>
+                    <p class="text-secondary small mb-0">Click to cast your ballot, confirm your selection inside a popup modal, and receive your cryptographically signed voter receipt.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- User Reviews Section -->
+<section class="py-5 bg-body-tertiary">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-dark fs-1 mb-2">Voter Trust Feed</h2>
+            <p class="text-secondary max-width-600 mx-auto">See how students and administrators feel about our secure digital ballot system.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm glass-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="rounded-circle border me-3" width="50" height="50">
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">Sarah Jenkins</h6>
+                            <small class="text-muted">CS Union President</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-0">"CampusVote transformed our annual department elections. The AJAX real-time results were spectacular, and double-voting blocks gave everyone total confidence."</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm glass-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle border me-3" width="50" height="50">
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">David Miller</h6>
+                            <small class="text-muted">BCA Election Admin</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-0">"The administrative tools are Stripe-level. Adding candidates, managing voter approvals, and generating Chart.js bars works natively. Highly recommended!"</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm glass-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" class="rounded-circle border me-3" width="50" height="50">
+                        <div>
+                            <h6 class="fw-bold text-dark mb-0">Emma Watson</h6>
+                            <small class="text-muted">Student Representative</small>
+                        </div>
+                    </div>
+                    <p class="text-secondary small mb-0">"I loved casting my ballot on my mobile phone. The collapsible sidebars, bottom navigations, and receipt logs are incredibly clean and easy to use."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // GSAP Scroll reveals for premium SaaS transitions
+    document.addEventListener('DOMContentLoaded', function() {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero fade up trigger
+        gsap.from('.animate-fade-up', {
+            y: 40,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.animate-fade-up-delayed', {
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.animate-fade-up-delayed-2', {
+            y: 20,
+            opacity: 0,
+            duration: 0.8,
+            delay: 0.6,
+            ease: 'power3.out'
+        });
+
+        // Feature cards slide reveal
+        gsap.from('.feature-card', {
+            scrollTrigger: {
+                trigger: '.feature-section',
+                start: 'top 80%',
+            },
+            y: 60,
+            opacity: 0,
+            duration: 0.7,
+            stagger: 0.15,
+            ease: 'power2.out'
+        });
+
+        // Steps timeline reveal
+        gsap.from('.timeline-step', {
+            scrollTrigger: {
+                trigger: '.timeline-section',
+                start: 'top 85%',
+            },
+            x: -40,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.2,
+            ease: 'power2.out'
+        });
+    });
+</script>
+{% endblock %}

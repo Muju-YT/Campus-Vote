@@ -1,0 +1,90 @@
+/* Card Styles */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: var(--body-bg);
+    border-bottom-color: var(--border-color);
+}
+
+/* Stats Cards */
+.stats-card .card-body {
+    padding: 1.25rem;
+}
+
+.stats-card .icon-wrapper {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Department Badges */
+.department-badge {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    font-weight: normal;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+/* Progress Bars */
+.progress {
+    background-color: var(--body-bg);
+    height: 6px;
+}
+
+/* Table Styles */
+.table {
+    color: var(--text-color);
+    --bs-table-bg: transparent;
+}
+
+.table-hover tbody tr:hover {
+    --bs-table-accent-bg: rgba(var(--primary-rgb), 0.05);
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 250px;
+}
+
+/* Countdown Timer */
+.countdown-timer {
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+/* Activity Feed */
+.activity-feed .list-group-item {
+    border-color: var(--border-color);
+    padding: 0.75rem 1.25rem;
+}
+
+.activity-feed .list-group-item:hover {
+    background-color: rgba(var(--primary-rgb), 0.05);
+}
+
+/* Alert Styles */
+.alert {
+    border: 1px solid transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .stats-card {
+        margin-bottom: 1rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+}

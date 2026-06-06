@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Portal - CampusVote{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- GSAP Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="{% static 'voting_app/css/design_system.css' %}">
+    <link rel="stylesheet" href="{% static 'voting_app/css/dashboard.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar" id="sidebarPanel">
+            <div class="sidebar-brand-wrapper">
+                <h4 class="fw-bold text-gradient-primary mb-0"><i class="fas fa-vote-yea me-2"></i><span>CampusVote</span></h4>
+                <button class="btn btn-link text-secondary p-0 d-none d-lg-block" id="sidebarCollapseToggleBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav-menu">
+                <a href="{% url 'voting_app:admin_dashboard' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'voting_app:admin_students' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'admin_students' %}active{% endif %}">
+                    <i class="fas fa-users"></i>
+                    <span>Students</span>
+                </a>
+                <a href="{% url 'voting_app:candidate' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'candidate' %}active{% endif %}">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Candidates</span>
+                </a>
+                <a href="{% url 'voting_app:election' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'election' %}active{% endif %}">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Elections</span>
+                </a>
+                <a href="{% url 'voting_app:admin_results' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'admin_results' %}active{% endif %}">
+                    <i class="fas fa-poll"></i>
+                    <span>Results</span>
+                </a>
+                <a href="{% url 'voting_app:settings' %}" class="sidebar-nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer-wrapper">
+                <a href="{% url 'voting_app:logout' %}" class="sidebar-nav-link text-danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Panel Container -->
+        <div class="flex-grow-1 d-flex flex-column">
+            <!-- Top Header Navbar -->
+            <header class="dashboard-navbar">
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Theme Toggler Button -->
+                    <button id="themeToggleBtn" class="btn btn-link text-secondary p-2 me-2" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+
+                    <!-- Dropdown profile -->
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle text-dark" data-bs-toggle="dropdown">
+                            <img src="https://randomuser.me/api/portraits/lego/3.jpg" class="rounded-circle border border-2 border-primary me-2" width="36" height="36">
+                            <span class="user-name d-none d-sm-inline-block fw-semibold text-secondary" style="color: var(--text-primary) !important;">{{ request.user.full_name|default:request.user.email }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end glass-card border-0 shadow mt-2">
+                            <li><h6 class="dropdown-header text-muted">Administrator</h6></li>
+                            <li><hr class="dropdown-divider border-color"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'voting_app:logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Notification Messages -->
+            {% if messages %}
+                <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+                    {% for message in messages %}
+                        <div class="toast align-items-center text-white bg-{% if message.tags == 'error' %}danger{% elif message.tags == 'success' %}success{% else %}info{% endif %} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
+                                    {{ message }}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Dashboard Content panel -->
+            <main class="dashboard-main-panel">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="{% url 'voting_app:admin_dashboard' %}" class="mobile-bottom-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'voting_app:admin_students' %}" class="mobile-bottom-link {% if request.resolver_match.url_name == 'admin_students' %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>Students</span>
+        </a>
+        <a href="{% url 'voting_app:candidate' %}" class="mobile-bottom-link {% if request.resolver_match.url_name == 'candidate' %}active{% endif %}">
+            <i class="fas fa-user-tie"></i>
+            <span>Candidates</span>
+        </a>
+        <a href="{% url 'voting_app:election' %}" class="mobile-bottom-link {% if request.resolver_match.url_name == 'election' %}active{% endif %}">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Elections</span>
+        </a>
+    </nav>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Toggler Script -->
+    <script src="{% static 'voting_app/js/theme_switcher.js' %}"></script>
+    <script>
+        // Collapsible sidebar panel trigger on Desktop
+        const sidebar = document.getElementById('sidebarPanel');
+        const collapseBtn = document.getElementById('sidebarCollapseToggleBtn');
+        
+        if (collapseBtn && sidebar) {
+            collapseBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('sidebar-collapsed');
+            });
+        }
+
+        // Auto hide toast alerts
+        document.addEventListener('DOMContentLoaded', function() {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

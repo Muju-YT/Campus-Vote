@@ -1,0 +1,41 @@
+.login-container {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.logo-container {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 10;
+}
+
+.nav-tabs .nav-link {
+    padding: 12px;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    font-weight: 600;
+}
+
+.form-floating label {
+    padding-left: 2.5rem;
+}
+
+.form-floating i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}

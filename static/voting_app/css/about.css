@@ -1,0 +1,79 @@
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%) !important;
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+}
+
+/* Feature Cards */
+.feature-card {
+    transition: all 0.3s ease;
+    border-radius: 10px !important;
+    opacity: 0;
+    transform: translateY(20px);
+    background-color: var(--bs-card-bg) !important;
+    border: 1px solid var(--bs-border-color) !important;
+}
+
+.feature-card.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* How It Works Steps */
+.step-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.step-item.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.step-icon {
+    transition: all 0.3s ease;
+    width: 70px;
+    height: 70px;
+}
+
+.step-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 3rem 0 !important;
+    }
+    
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .feature-card, .step-item {
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-icon {
+        width: 60px;
+        height: 60px;
+    }
+}

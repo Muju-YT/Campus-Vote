@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3">About CampusVote</h1>
+                <p class="lead mb-4">Empowering student voices through secure, accessible, and transparent digital elections.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="fw-bold mb-4 text-body">Our Mission</h2>
+                <p class="lead text-body-secondary">CampusVote is dedicated to revolutionizing student elections by providing a secure, user-friendly platform that ensures every vote counts. We believe in fostering democratic participation, enhancing transparency, and making the voting process accessible to all students.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why CampusVote Section -->
+<section class="py-5 bg-body-tertiary">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="fw-bold text-body">Why CampusVote?</h2>
+                <p class="text-body-secondary">Discover what makes our platform the ideal choice for campus elections</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                            <i class="fas fa-shield-alt fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold text-body">Secure Voting</h5>
+                        <p class="text-body-secondary">Military-grade encryption and blockchain technology ensure tamper-proof elections.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold text-body">Student-Centric</h5>
+                        <p class="text-body-secondary">Designed specifically for student organizations with intuitive interfaces.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                            <i class="fas fa-chart-line fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold text-body">Live Results</h5>
+                        <p class="text-body-secondary">Real-time vote tracking and instant results when polls close.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm feature-card">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-inline-block mb-3">
+                            <i class="fas fa-universal-access fa-2x"></i>
+                        </div>
+                        <h5 class="fw-bold text-body">Accessibility</h5>
+                        <p class="text-body-secondary">WCAG-compliant design works for all students, including those with disabilities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="fw-bold text-body">How It Works</h2>
+                <p class="text-body-secondary">Simple steps to participate in campus elections</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Step 1 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center step-item">
+                    <div class="step-icon bg-primary text-white rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-user-plus fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-body">1. Register</h5>
+                    <p class="text-body-secondary">Create your account using your campus credentials.</p>
+                </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center step-item">
+                    <div class="step-icon bg-primary text-white rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-body">2. Verify</h5>
+                    <p class="text-body-secondary">Confirm your student status through our secure verification.</p>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center step-item">
+                    <div class="step-icon bg-primary text-white rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-vote-yea fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-body">3. Vote</h5>
+                    <p class="text-body-secondary">Cast your ballot securely from any device during election period.</p>
+                </div>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="col-md-6 col-lg-3">
+                <div class="text-center step-item">
+                    <div class="step-icon bg-primary text-white rounded-circle p-3 d-inline-block mb-3">
+                        <i class="fas fa-poll fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-body">4. Results</h5>
+                    <p class="text-body-secondary">View live or final results with complete transparency.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CampusVote</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GSAP Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="{% static 'voting_app/css/design_system.css' %}">
+    <link rel="stylesheet" href="{% static 'voting_app/css/auth.css' %}">
+    <style>
+        .active-role {
+            background: var(--brand-primary-gradient) !important;
+            color: #FFFFFF !important;
+            box-shadow: var(--shadow-glow);
+        }
+        .role-selector button {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-split-wrapper">
+        <!-- Left Panel: Form Card -->
+        <div class="auth-split-form-panel">
+            <!-- Back Home Link -->
+            <a href="{% url 'voting_app:home' %}" class="btn-premium-outline btn-sm position-absolute top-0 start-0 m-4">
+                <i class="fas fa-arrow-left me-1"></i> Back to Home
+            </a>
+
+            <div class="auth-card-width">
+                <!-- Brand logo header -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-gradient-primary fs-3 mb-1"><i class="fas fa-vote-yea me-2"></i>CampusVote</h3>
+                    <p class="text-secondary small">Access your secure college election profile</p>
+                </div>
+
+                <!-- Role Selector -->
+                <div class="role-selector mb-4 p-1 rounded-3 d-flex border border-color" style="background: rgba(0, 0, 0, 0.15) !important;">
+                    <button type="button" class="btn w-50 py-2 active-role" id="btnRoleStudent" onclick="switchLoginRole('student')" style="border: none; font-size: 0.85rem; font-weight: 600; border-radius: 6px; transition: all 0.25s ease;">
+                        <i class="fas fa-user-graduate me-2"></i>Student Portal
+                    </button>
+                    <button type="button" class="btn w-50 py-2" id="btnRoleAdmin" onclick="switchLoginRole('admin')" style="border: none; font-size: 0.85rem; font-weight: 600; border-radius: 6px; transition: all 0.25s ease;">
+                        <i class="fas fa-user-shield me-2"></i>Admin Console
+                    </button>
+                </div>
+
+                <!-- Toast Notifications -->
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}info{% endif %} border-0 shadow-sm py-2 px-3 small d-flex align-items-center">
+                                <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Form -->
+                <form method="post" action="{% url 'voting_app:login' %}">
+                    {% csrf_token %}
+                    <!-- Email/Username input -->
+                    <div class="mb-3">
+                        <label for="email" id="labelEmail" class="form-label text-secondary small fw-medium">Official Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-end-0 border-color text-muted"><i class="fas fa-envelope" id="iconEmail"></i></span>
+                            <input type="text" class="form-control form-input-custom border-start-0 ps-0" id="email" name="email" required placeholder="name@college.edu">
+                        </div>
+                    </div>
+
+                    <!-- Password input -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="password" class="form-label text-secondary small fw-medium mb-0">Security Password</label>
+                            <a href="#" class="small text-decoration-none text-gradient-primary">Forgot Password?</a>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-end-0 border-color text-muted"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control form-input-custom border-start-0 ps-0" id="password" name="password" required placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <!-- Remember me check -->
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me">
+                            <label class="form-check-label text-secondary small fw-medium" for="remember_me">
+                                Remember my session
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="btnSubmit" class="btn-premium w-100 py-3 mb-4">
+                        Sign In to Dashboard <i class="fas fa-sign-in-alt ms-2"></i>
+                    </button>
+
+                    <!-- Register Link -->
+                    <div class="text-center mt-4">
+                        <p class="text-secondary small" id="registerPrompt">New student voter? <a href="{% url 'voting_app:register' %}" class="text-decoration-none fw-bold text-gradient-primary">Create an Account</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Panel: Brand visual panel -->
+        <div class="auth-split-visual-panel">
+            <h1 class="visual-headline">Secure. Transparent.<br>Academic Elections.</h1>
+            <p class="visual-sub">CampusVote delivers double-voting prevention, cryptographically signed voter receipts, and dynamic ballot progress diagrams to colleges and universities.</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function switchLoginRole(role) {
+            const btnStudent = document.getElementById('btnRoleStudent');
+            const btnAdmin = document.getElementById('btnRoleAdmin');
+            
+            const labelEmail = document.getElementById('labelEmail');
+            const inputEmail = document.getElementById('email');
+            const iconEmail = document.getElementById('iconEmail');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const registerPrompt = document.getElementById('registerPrompt');
+
+            if (role === 'admin') {
+                btnStudent.classList.remove('active-role');
+                btnStudent.classList.add('text-secondary');
+                
+                btnAdmin.classList.add('active-role');
+                btnAdmin.classList.remove('text-secondary');
+
+                gsap.to('.auth-split-form-panel', { opacity: 0.85, duration: 0.15, yoyo: true, repeat: 1 });
+
+                setTimeout(() => {
+                    labelEmail.innerText = 'Administrator Username / Email';
+                    inputEmail.placeholder = 'Admin';
+                    iconEmail.className = 'fas fa-user-shield';
+                    btnSubmit.innerHTML = 'Access Admin Console <i class="fas fa-arrow-right ms-2"></i>';
+                    registerPrompt.style.display = 'none';
+                }, 150);
+            } else {
+                btnAdmin.classList.remove('active-role');
+                btnAdmin.classList.add('text-secondary');
+                
+                btnStudent.classList.add('active-role');
+                btnStudent.classList.remove('text-secondary');
+
+                gsap.to('.auth-split-form-panel', { opacity: 0.85, duration: 0.15, yoyo: true, repeat: 1 });
+
+                setTimeout(() => {
+                    labelEmail.innerText = 'Official Email Address';
+                    inputEmail.placeholder = 'name@college.edu';
+                    iconEmail.className = 'fas fa-envelope';
+                    btnSubmit.innerHTML = 'Sign In to Dashboard <i class="fas fa-sign-in-alt ms-2"></i>';
+                    registerPrompt.style.display = 'block';
+                }, 150);
+            }
+        }
+    </script>
+</body>
+</html>

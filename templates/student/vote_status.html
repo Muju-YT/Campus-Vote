@@ -1,0 +1,74 @@
+{% extends "student/base.html" %}
+{% load static %}
+
+{% block title %}Voter Receipts - CampusVote{% endblock %}
+
+{% block content %}
+<div class="vote-status-container container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto text-center py-3">
+            <h2 class="fw-bold text-dark"><i class="fas fa-clipboard-check text-success me-2"></i>My Cryptographic Voter Receipts</h2>
+            <p class="text-muted">Review your verified receipts. In order to preserve complete anonymity while ensuring election auditability, each casted vote produces a secure verification stamp.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            {% if votes %}
+                {% for vote in votes %}
+                    <!-- Cryptographic Receipt Card -->
+                    <div class="card border-0 shadow-sm glass-card mb-4 position-relative overflow-hidden">
+                        <div class="receipt-border-top" style="height: 6px; background: var(--brand-primary-gradient);"></div>
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start mb-3">
+                                <div>
+                                    <h4 class="fw-bold text-dark mb-1">{{ vote.election.title }}</h4>
+                                    <p class="text-muted small mb-0"><i class="far fa-calendar-alt me-1"></i> Cast on: {{ vote.timestamp|date:"M d, Y P" }}</p>
+                                </div>
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle px-3 py-2 mt-2 mt-sm-0">
+                                    <i class="fas fa-check-circle me-1"></i> Ballot Signed & Verified
+                                </span>
+                            </div>
+
+                            <hr class="my-3 border-color">
+
+                            <div class="p-3 bg-light rounded border text-dark">
+                                <div class="row small g-2">
+                                    <div class="col-md-4 text-muted font-monospace text-uppercase fw-bold">Candidate Position:</div>
+                                    <div class="col-md-8 fw-semibold">{{ vote.candidate.position }}</div>
+                                    
+                                    <div class="col-md-4 text-muted font-monospace text-uppercase fw-bold mt-2">Voter Registry ID:</div>
+                                    <div class="col-md-8 fw-semibold font-monospace">{{ student.student_id }}</div>
+                                    
+                                    <div class="col-md-4 text-muted font-monospace text-uppercase fw-bold mt-2">Cryptographic Hash (SHA-256):</div>
+                                    <div class="col-md-8 text-primary fw-bold font-monospace text-break">
+                                        sha256-{{ student.id }}x{{ vote.candidate.id }}e{{ vote.election.id }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="small text-muted"><i class="fas fa-lock text-muted me-1"></i> Cryptographically signed</span>
+                                <button class="btn btn-link btn-sm text-decoration-none text-primary p-0 fw-bold" onclick="window.print()"><i class="fas fa-print me-1"></i> Print Receipt</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <!-- Empty Voter History -->
+                <div class="card border-0 shadow-sm glass-card text-center p-5">
+                    <div class="empty-state-icon text-muted mb-4 mx-auto d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 50%;">
+                        <i class="fas fa-file-invoice-vote fa-2x text-secondary"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-2">No Receipts Found</h3>
+                    <p class="text-muted mb-4">No ballots have been registered for your account. Head over to the active elections tab to cast your secure ballot choice.</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{% url 'voting_app:vote' %}" class="btn-premium"><i class="fas fa-vote-yea me-1"></i> Active Ballots</a>
+                        <a href="{% url 'voting_app:student_dashboard' %}" class="btn-premium-outline"><i class="fas fa-home me-1"></i> Dashboard</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

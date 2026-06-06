@@ -1,0 +1,213 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Manage Elections - CampusVote{% endblock %}
+
+{% block content %}
+<div class="election-management container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark mb-1"><i class="fas fa-calendar-alt text-primary me-2"></i>Election Campaigns</h2>
+            <p class="text-muted small mb-0">Create new election campaigns, adjust voting timelines or manage statuses.</p>
+        </div>
+        <button class="btn-premium py-2 px-4 shadow" data-bs-toggle="modal" data-bs-target="#addElectionModal">
+            <i class="fas fa-plus me-2"></i> Add New Election
+        </button>
+    </div>
+
+    <!-- Elections Listing Panel -->
+    <div class="card border-0 shadow-sm glass-card p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr class="text-muted">
+                        <th>Election Banner</th>
+                        <th>Election Title</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status Badge</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for election in elections %}
+                        <tr>
+                            <td>
+                                {% if election.banner %}
+                                    <img src="{{ election.banner.url }}" alt="Banner" class="rounded border border-primary border-opacity-25" width="80" height="45" style="object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded d-flex align-items-center justify-content-center border" style="width: 80px; height: 45px;">
+                                        <i class="fas fa-image small"></i>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong class="text-dark fs-6">{{ election.title }}</strong>
+                                <div><small class="text-muted">{{ election.description|truncatewords:8 }}</small></div>
+                            </td>
+                            <td>{{ election.start_date|date:"M d, Y P" }}</td>
+                            <td>{{ election.end_date|date:"M d, Y P" }}</td>
+                            <td>
+                                {% if election.computed_status == 'Active' %}
+                                    <span class="badge bg-success bg-opacity-10 text-success"><i class="fas fa-play me-1 small"></i>Active</span>
+                                {% elif election.computed_status == 'Completed' %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">Completed</span>
+                                {% else %}
+                                    <span class="badge bg-info bg-opacity-10 text-info">Upcoming</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <!-- Edit button triggers JavaScript popup filler -->
+                                    <button class="btn btn-outline-warning btn-sm" 
+                                            onclick="openEditElectionModal('{{ election.id }}', '{{ election.title|escapejs }}', '{{ election.description|escapejs }}', '{{ election.start_date|date:'Y-m-d\TH:i' }}', '{{ election.end_date|date:'Y-m-d\TH:i' }}', '{{ election.status }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <!-- Delete button triggers post -->
+                                    <form method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this election? Candidates and casted ballots will be permanently deleted.');">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="delete_election" value="1">
+                                        <input type="hidden" name="election_id" value="{{ election.id }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fas fa-calendar-times fa-3x mb-3 text-secondary" style="opacity: 0.5;"></i>
+                                <h5>No election campaigns registered in database.</h5>
+                                <p class="small mb-0">Use the button above to add election campaigns.</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Election Modal -->
+<div class="modal fade" id="addElectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-plus text-primary me-2"></i>Add New Election</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addElectionForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="add_election" value="1">
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label for="add_title" class="form-label fw-semibold text-dark">Election Title</label>
+                        <input type="text" class="form-control" id="add_title" name="title" required placeholder="e.g. BCA Association Representative">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="add_start_date" class="form-label fw-semibold text-dark">Start Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="add_start_date" name="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="add_end_date" class="form-label fw-semibold text-dark">End Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="add_end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="add_description" class="form-label fw-semibold text-dark">Campaign Manifesto / Description</label>
+                        <textarea class="form-control" id="add_description" name="description" rows="3" placeholder="Describe the election bounds and rules..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="add_banner" class="form-label fw-semibold text-dark">Campaign Banner Image</label>
+                        <input type="file" class="form-control" id="add_banner" name="banner" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="add_status" class="form-label fw-semibold text-dark">Status Override</label>
+                        <select class="form-select" id="add_status" name="status">
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn-premium-outline w-50" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-premium w-50"><i class="fas fa-save me-1"></i> Save Election</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Election Modal -->
+<div class="modal fade" id="editElectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark"><i class="fas fa-edit text-warning me-2"></i>Edit Election Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editElectionForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="edit_election" value="1">
+                <input type="hidden" name="election_id" id="edit_election_id">
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label for="edit_title" class="form-label fw-semibold text-dark">Election Title</label>
+                        <input type="text" class="form-control" id="edit_title" name="title" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_start_date" class="form-label fw-semibold text-dark">Start Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="edit_start_date" name="start_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_end_date" class="form-label fw-semibold text-dark">End Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="edit_end_date" name="end_date" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label fw-semibold text-dark">Description</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_banner" class="form-label fw-semibold text-dark">Campaign Banner Image (Optional update)</label>
+                        <input type="file" class="form-control" id="edit_banner" name="banner" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_status" class="form-label fw-semibold text-dark">Status Override</label>
+                        <select class="form-select" id="edit_status" name="status">
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn-premium-outline w-50" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-premium w-50"><i class="fas fa-save me-1"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Fills the edit modal dynamically with clicked election record details
+    function openEditElectionModal(id, title, desc, startDate, endDate, status) {
+        document.getElementById('edit_election_id').value = id;
+        document.getElementById('edit_title').value = title;
+        document.getElementById('edit_description').value = desc;
+        document.getElementById('edit_start_date').value = startDate;
+        document.getElementById('edit_end_date').value = endDate;
+        document.getElementById('edit_status').value = status;
+        
+        var editModal = new bootstrap.Modal(document.getElementById('editElectionModal'));
+        editModal.show();
+    }
+</script>
+{% endblock %}
+{% endblock %}
