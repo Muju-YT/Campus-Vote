@@ -189,3 +189,102 @@ class CampusVoteSecurityTests(TestCase):
         self.assertEqual(response_dup.status_code, 400)
         resp_dup_data = json.loads(response_dup.content)
         self.assertFalse(resp_dup_data['success'])
+
+
+class CampusVoteAuthenticationTests(TestCase):
+    def setUp(self):
+        # Create student with username different from email
+        self.student_user = User.objects.create_user(
+            username="john_doe",
+            email="john@college.edu",
+            password="SecurePassword123!",
+            full_name="John Doe",
+            role="student"
+        )
+        self.student_profile = StudentProfile.objects.create(
+            user=self.student_user,
+            student_id="CS-999",
+            department="B.Sc CS",
+            year="2nd Year",
+            is_approved=True
+        )
+
+        # Create admin with username different from email
+        self.admin_user = User.objects.create_superuser(
+            username="jane_admin",
+            email="jane@college.edu",
+            password="AdminPassword123!",
+            full_name="Jane Admin",
+            role="admin"
+        )
+        self.client = Client()
+
+    def test_student_login_with_email(self):
+        # Student logs in with email
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'john@college.edu',
+            'password': 'SecurePassword123!'
+        })
+        # Check redirect to student dashboard
+        self.assertRedirects(response, reverse('voting_app:student_dashboard'))
+
+    def test_student_login_with_username(self):
+        # Student logs in with username (case insensitive check too)
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'JOHN_DOE',
+            'password': 'SecurePassword123!'
+        })
+        # Check redirect to student dashboard
+        self.assertRedirects(response, reverse('voting_app:student_dashboard'))
+
+    def test_admin_login_with_email(self):
+        # Admin logs in with email (case insensitive)
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'JANE@college.edu',
+            'password': 'AdminPassword123!'
+        })
+        self.assertRedirects(response, reverse('voting_app:admin_dashboard'))
+
+    def test_admin_login_with_username(self):
+        # Admin logs in with username
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'jane_admin',
+            'password': 'AdminPassword123!'
+        })
+        self.assertRedirects(response, reverse('voting_app:admin_dashboard'))
+
+    def test_invalid_login_credentials(self):
+        # Login with invalid password
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'john@college.edu',
+            'password': 'WrongPassword!'
+        })
+        self.assertEqual(response.status_code, 200)
+        # Check that error message is present
+        messages = list(response.context['messages'])
+        self.assertTrue(any("Invalid email/username or password." in str(m) for m in messages))
+
+    def test_unapproved_student_login_blocked(self):
+        # Create unapproved student
+        unapproved_user = User.objects.create_user(
+            username="unapproved_student",
+            email="unapproved@college.edu",
+            password="SecurePassword123!",
+            role="student"
+        )
+        StudentProfile.objects.create(
+            user=unapproved_user,
+            student_id="CS-888",
+            department="B.Sc CS",
+            year="1st Year",
+            is_approved=False
+        )
+        # Try to log in with username
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'unapproved_student',
+            'password': 'SecurePassword123!'
+        })
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("pending admin verification" in str(m) for m in messages))
+

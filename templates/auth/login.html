@@ -68,10 +68,10 @@
                     {% csrf_token %}
                     <!-- Email/Username input -->
                     <div class="mb-3">
-                        <label for="email" id="labelEmail" class="form-label text-secondary small fw-medium">Official Email Address</label>
+                        <label for="email" id="labelEmail" class="form-label text-secondary small fw-medium">Official Email or Username</label>
                         <div class="input-group">
                             <span class="input-group-text bg-transparent border-end-0 border-color text-muted"><i class="fas fa-envelope" id="iconEmail"></i></span>
-                            <input type="text" class="form-control form-input-custom border-start-0 ps-0" id="email" name="email" required placeholder="name@college.edu">
+                            <input type="text" class="form-control form-input-custom border-start-0 ps-0" id="email" name="email" required placeholder="name@college.edu or username">
                         </div>
                     </div>
 
@@ -141,7 +141,7 @@
 
                 setTimeout(() => {
                     labelEmail.innerText = 'Administrator Username / Email';
-                    inputEmail.placeholder = 'Admin';
+                    inputEmail.placeholder = 'Admin or admin@gmail.com';
                     iconEmail.className = 'fas fa-user-shield';
                     btnSubmit.innerHTML = 'Access Admin Console <i class="fas fa-arrow-right ms-2"></i>';
                     registerPrompt.style.display = 'none';
@@ -156,8 +156,8 @@
                 gsap.to('.auth-split-form-panel', { opacity: 0.85, duration: 0.15, yoyo: true, repeat: 1 });
 
                 setTimeout(() => {
-                    labelEmail.innerText = 'Official Email Address';
-                    inputEmail.placeholder = 'name@college.edu';
+                    labelEmail.innerText = 'Official Email or Username';
+                    inputEmail.placeholder = 'name@college.edu or username';
                     iconEmail.className = 'fas fa-envelope';
                     btnSubmit.innerHTML = 'Sign In to Dashboard <i class="fas fa-sign-in-alt ms-2"></i>';
                     registerPrompt.style.display = 'block';

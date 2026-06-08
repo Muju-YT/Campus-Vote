@@ -37,7 +37,8 @@ if 'test' not in sys.argv:
                         username='Admin',
                         email='Admin@gmail.com',
                         password='Admin@1234',
-                        role='admin'
+                        role='admin',
+                        full_name='Administrator'
                     )
                 msg = "Superuser Admin created successfully"
                 print(msg, flush=True)

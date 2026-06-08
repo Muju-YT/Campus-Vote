@@ -79,15 +79,15 @@ def login_view(request):
         return redirect('voting_app:student_dashboard')
 
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username_or_email = request.POST.get('email')
         password = request.POST.get('password')
         remember_me = request.POST.get('remember_me')
 
-        if not email or not password:
-            messages.error(request, "Please enter both email and password.")
+        if not username_or_email or not password:
+            messages.error(request, "Please enter both email/username and password.")
             return render(request, 'auth/login.html')
 
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=username_or_email, password=password)
 
         if user is not None:
             # Check student approval
@@ -119,7 +119,7 @@ def login_view(request):
                 messages.success(request, f"Welcome, {user.full_name or user.email}!")
                 return redirect('voting_app:student_dashboard')
         else:
-            messages.error(request, "Invalid email or password.")
+            messages.error(request, "Invalid email/username or password.")
 
     return render(request, 'auth/login.html')
 

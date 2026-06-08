@@ -148,6 +148,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'voting_app.User'
 
+AUTHENTICATION_BACKENDS = [
+    'voting_app.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 
 
 
