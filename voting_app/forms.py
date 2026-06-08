@@ -88,15 +88,15 @@ class StudentRegistrationForm(forms.ModelForm):
         if commit:
             user.save()
 
-        # 2. Create and save corresponding StudentProfile
-        student_profile = StudentProfile.objects.create(
-            user=user,
-            student_id=self.cleaned_data["student_id"],
-            department=self.cleaned_data["department"],
-            year=self.cleaned_data["year"],
-            profile_photo=self.cleaned_data.get("profile_photo"),
-            is_approved=False
-        )
+            # 2. Create and save corresponding StudentProfile
+            student_profile = StudentProfile.objects.create(
+                user=user,
+                student_id=self.cleaned_data["student_id"],
+                department=self.cleaned_data["department"],
+                year=self.cleaned_data["year"],
+                profile_photo=self.cleaned_data.get("profile_photo"),
+                is_approved=False
+            )
         
         return user
 

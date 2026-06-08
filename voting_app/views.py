@@ -427,8 +427,7 @@ def admin_students(request):
         if 'add_student' in request.POST:
             form = StudentRegistrationForm(request.POST, request.FILES)
             if form.is_valid():
-                user = form.save(commit=False)
-                user.save()
+                user = form.save(commit=True)
                 profile = user.student_profile
                 profile.is_approved = True
                 profile.save()
