@@ -57,7 +57,6 @@
     position: relative;
     overflow: hidden;
     width: 100%;
-    min-height: 480px;
 }
 
 .form-step-slide {
@@ -133,4 +132,9 @@
     .auth-split-form-panel {
         padding: 2rem 1.5rem;
     }
+}
+
+/* Theme Switching Smooth Transitions */
+body, .auth-split-form-panel, .glass-card, input, select, label, button, .signup-step-node, .input-group-text {
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease !important;
 }

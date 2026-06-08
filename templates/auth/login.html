@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +14,8 @@
     <!-- Design System CSS -->
     <link rel="stylesheet" href="{% static 'voting_app/css/design_system.css' %}">
     <link rel="stylesheet" href="{% static 'voting_app/css/auth.css' %}">
+    <!-- Theme Switcher Script -->
+    <script src="{% static 'voting_app/js/theme_switcher.js' %}"></script>
     <style>
         .active-role {
             background: var(--brand-primary-gradient) !important;
@@ -34,7 +36,12 @@
                 <i class="fas fa-arrow-left me-1"></i> Back to Home
             </a>
 
-            <div class="auth-card-width">
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="btn-premium-outline btn-sm position-absolute top-0 end-0 m-4" style="border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                <i class="fas fa-sun"></i>
+            </button>
+
+            <div class="auth-card-width glass-card p-4 p-md-5 shadow">
                 <!-- Brand logo header -->
                 <div class="text-center mb-4">
                     <h3 class="fw-bold text-gradient-primary fs-3 mb-1"><i class="fas fa-vote-yea me-2"></i>CampusVote</h3>
@@ -164,6 +171,15 @@
                 }, 150);
             }
         }
+
+        // Form submission loading state
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const btn = document.getElementById('btnSubmit');
+            if (btn) {
+                setTimeout(() => { btn.disabled = true; }, 0);
+                btn.innerHTML = 'Processing... <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>';
+            }
+        });
     </script>
 </body>
 </html>

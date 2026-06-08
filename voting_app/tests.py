@@ -83,6 +83,7 @@ class CampusVoteSecurityTests(TestCase):
         # Verify student registration form validations
         data = {
             'full_name': 'Charlie Brown',
+            'username': 'charlie',
             'student_id': 'CS-103',
             'department': 'Commerce',
             'year': '3rd Year',
@@ -95,7 +96,7 @@ class CampusVoteSecurityTests(TestCase):
         
         user = form.save()
         self.assertFalse(user.student_profile.is_approved)  # Must start as unapproved
-        self.assertEqual(user.username, 'charlie@college.edu')
+        self.assertEqual(user.username, 'charlie')
         self.assertEqual(user.email, 'charlie@college.edu')
         self.assertTrue(user.check_password('StrongPassword123!'))
 
@@ -103,6 +104,7 @@ class CampusVoteSecurityTests(TestCase):
         # Verify passwords mismatch is blocked
         data = {
             'full_name': 'Charlie Brown',
+            'username': 'charlie_mismatch',
             'student_id': 'CS-104',
             'department': 'Commerce',
             'year': '3rd Year',
@@ -118,6 +120,7 @@ class CampusVoteSecurityTests(TestCase):
         # Verify duplicate student ID is blocked
         data = {
             'full_name': 'Alice Smith Junior',
+            'username': 'alice_junior',
             'student_id': 'CS-101',  # Matches setUp student_id
             'department': 'B.Sc CS',
             'year': '1st Year',
@@ -287,4 +290,135 @@ class CampusVoteAuthenticationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         messages = list(response.context['messages'])
         self.assertTrue(any("pending admin verification" in str(m) for m in messages))
+
+
+class CampusVoteRegistrationTests(TestCase):
+    def setUp(self):
+        # Create an existing user and profile to trigger duplicate errors
+        self.existing_user = User.objects.create_user(
+            username="existing_username",
+            email="existing_email@college.edu",
+            password="SecurePassword123!",
+            role="student"
+        )
+        self.existing_profile = StudentProfile.objects.create(
+            user=self.existing_user,
+            student_id="CS-777",
+            department="B.Sc CS",
+            year="1st Year",
+            is_approved=True
+        )
+        self.client = Client()
+
+    def test_registration_success(self):
+        # Test valid student registration
+        data = {
+            'full_name': 'New Student',
+            'username': 'new_voter',
+            'email': 'new.voter@college.edu',
+            'password': 'SecurePassword123!',
+            'confirm_password': 'SecurePassword123!',
+            'student_id': 'CS-666',
+            'department': 'B.Sc CS',
+            'year': '1st Year'
+        }
+        response = self.client.post(reverse('voting_app:register'), data)
+        self.assertRedirects(response, reverse('voting_app:login'))
+        
+        # Verify user and profile records created correctly
+        user = User.objects.get(username='new_voter')
+        self.assertEqual(user.email, 'new.voter@college.edu')
+        self.assertEqual(user.full_name, 'New Student')
+        self.assertTrue(user.check_password('SecurePassword123!'))
+        self.assertEqual(user.role, 'student')
+        
+        profile = user.student_profile
+        self.assertEqual(profile.student_id, 'CS-666')
+        self.assertFalse(profile.is_approved)
+
+    def test_registration_duplicate_email(self):
+        # Test duplicate email registration failure
+        data = {
+            'full_name': 'New Student',
+            'username': 'unique_user',
+            'email': 'existing_email@college.edu', # Collision
+            'password': 'SecurePassword123!',
+            'confirm_password': 'SecurePassword123!',
+            'student_id': 'CS-666',
+            'department': 'B.Sc CS',
+            'year': '1st Year'
+        }
+        response = self.client.post(reverse('voting_app:register'), data)
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("email address is already registered" in str(m) for m in messages))
+
+    def test_registration_duplicate_username(self):
+        # Test duplicate username registration failure
+        data = {
+            'full_name': 'New Student',
+            'username': 'existing_username', # Collision
+            'email': 'unique_email@college.edu',
+            'password': 'SecurePassword123!',
+            'confirm_password': 'SecurePassword123!',
+            'student_id': 'CS-666',
+            'department': 'B.Sc CS',
+            'year': '1st Year'
+        }
+        response = self.client.post(reverse('voting_app:register'), data)
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("username is already taken" in str(m) for m in messages))
+
+    def test_registration_duplicate_student_id(self):
+        # Test duplicate student ID registration failure
+        data = {
+            'full_name': 'New Student',
+            'username': 'unique_user',
+            'email': 'unique_email@college.edu',
+            'password': 'SecurePassword123!',
+            'confirm_password': 'SecurePassword123!',
+            'student_id': 'CS-777', # Collision
+            'department': 'B.Sc CS',
+            'year': '1st Year'
+        }
+        response = self.client.post(reverse('voting_app:register'), data)
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("ID is already registered" in str(m) for m in messages))
+
+    def test_registration_password_mismatch(self):
+        # Test password mismatch failure
+        data = {
+            'full_name': 'New Student',
+            'username': 'unique_user',
+            'email': 'unique_email@college.edu',
+            'password': 'SecurePassword123!',
+            'confirm_password': 'DifferentPassword123!',
+            'student_id': 'CS-666',
+            'department': 'B.Sc CS',
+            'year': '1st Year'
+        }
+        response = self.client.post(reverse('voting_app:register'), data)
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("Passwords do not match" in str(m) for m in messages))
+
+    def test_registration_invalid_email_format(self):
+        # Test invalid email format failure
+        data = {
+            'full_name': 'New Student',
+            'username': 'unique_user',
+            'email': 'invalid-email-format',
+            'password': 'SecurePassword123!',
+            'confirm_password': 'SecurePassword123!',
+            'student_id': 'CS-666',
+            'department': 'B.Sc CS',
+            'year': '1st Year'
+        }
+        response = self.client.post(reverse('voting_app:register'), data)
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("Email" in str(m) or "email" in str(m) for m in messages))
+
 

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnBack = document.getElementById('btnPrevStep');
     const btnSubmit = document.getElementById('btnSubmitForm');
     
-    let currentStep = 0;
+    let currentStep = typeof initialStepIndex !== 'undefined' ? initialStepIndex : 0;
 
     // Slide transition layout helper
     function updateSteps() {
@@ -60,12 +60,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Step 1 Validation
     function validateStep1() {
         const fullName = document.getElementById('id_full_name').value.trim();
+        const username = document.getElementById('id_username').value.trim();
         const email = document.getElementById('id_email').value.trim();
         const password = document.getElementById('id_password').value;
         const confirmPassword = document.getElementById('id_confirm_password').value;
 
-        if (!fullName || !email || !password || !confirmPassword) {
+        if (!fullName || !username || !email || !password || !confirmPassword) {
             alert('Please fill out all credential fields.');
+            return false;
+        }
+
+        // Email format validation (Regex check)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
             return false;
         }
 

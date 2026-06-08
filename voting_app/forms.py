@@ -1,10 +1,15 @@
 from django import forms
 from django.contrib.auth import password_validation
+from django.db import transaction
 from .models import User, StudentProfile, Election, Candidate
 
 class StudentRegistrationForm(forms.ModelForm):
     full_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'}),
+        required=True
+    )
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
         required=True
     )
     email = forms.EmailField(
@@ -43,7 +48,7 @@ class StudentRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['full_name', 'email', 'password']
+        fields = ['full_name', 'username', 'email', 'password']
 
     def clean_student_id(self):
         student_id = self.cleaned_data.get('student_id')
@@ -53,9 +58,15 @@ class StudentRegistrationForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("A student with this email address is already registered.")
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("A user with this email address is already registered.")
         return email
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
 
     def clean(self):
         cleaned_data = super().clean()
@@ -67,11 +78,12 @@ class StudentRegistrationForm(forms.ModelForm):
         
         return cleaned_data
 
+    @transaction.atomic
     def save(self, commit=True):
         # 1. Create and save User
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
-        user.username = self.cleaned_data["email"]
+        user.username = self.cleaned_data["username"]
         user.role = 'student'
         if commit:
             user.save()

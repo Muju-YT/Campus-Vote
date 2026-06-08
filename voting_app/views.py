@@ -144,7 +144,10 @@ def register(request):
         else:
             for field, errors in form.errors.items():
                 for error in errors:
-                    messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
+                    if field == '__all__':
+                        messages.error(request, error)
+                    else:
+                        messages.error(request, f"{field.replace('_', ' ').capitalize()}: {error}")
     else:
         form = StudentRegistrationForm()
 
