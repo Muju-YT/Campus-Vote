@@ -1,7 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
+    <!-- Theme Switcher Initialization -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CampusVote - Online College Voting System{% endblock %}</title>
@@ -33,7 +41,7 @@
             <a class="navbar-brand-saas text-gradient-primary d-flex align-items-center" href="{% url 'voting_app:home' %}">
                 <i class="fas fa-vote-yea me-2"></i>CampusVote
             </a>
-            <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavbar" style="color: var(--text-primary);">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="landingNavbar">

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function applyTheme(theme) {
         htmlElement.setAttribute('data-theme', theme);
+        htmlElement.setAttribute('data-bs-theme', theme);
         const icon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
         
         if (icon) {

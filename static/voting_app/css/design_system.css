@@ -188,6 +188,15 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-secondary) !important;
 }
 
+/* Global Text Colors Sync with Design System */
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
 /* Global Glass Modal Styling */
 .glass-modal {
     background: var(--bg-surface) !important;
