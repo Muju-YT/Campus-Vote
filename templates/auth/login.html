@@ -80,6 +80,7 @@
                 <!-- Form -->
                 <form method="post" action="{% url 'voting_app:login' %}">
                     {% csrf_token %}
+                    <input type="hidden" id="loginRole" name="role" value="student">
                     <!-- Email/Username input -->
                     <div class="mb-3">
                         <label for="email" id="labelEmail" class="form-label text-secondary small fw-medium">Official Email or Username</label>
@@ -143,6 +144,11 @@
             const iconEmail = document.getElementById('iconEmail');
             const btnSubmit = document.getElementById('btnSubmit');
             const registerPrompt = document.getElementById('registerPrompt');
+            const roleInput = document.getElementById('loginRole');
+            
+            if (roleInput) {
+                roleInput.value = role;
+            }
 
             if (role === 'admin') {
                 btnStudent.classList.remove('active-role');

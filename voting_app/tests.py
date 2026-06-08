@@ -226,7 +226,8 @@ class CampusVoteAuthenticationTests(TestCase):
         # Student logs in with email
         response = self.client.post(reverse('voting_app:login'), {
             'email': 'john@college.edu',
-            'password': 'SecurePassword123!'
+            'password': 'SecurePassword123!',
+            'role': 'student'
         })
         # Check redirect to student dashboard
         self.assertRedirects(response, reverse('voting_app:student_dashboard'))
@@ -235,7 +236,8 @@ class CampusVoteAuthenticationTests(TestCase):
         # Student logs in with username (case insensitive check too)
         response = self.client.post(reverse('voting_app:login'), {
             'email': 'JOHN_DOE',
-            'password': 'SecurePassword123!'
+            'password': 'SecurePassword123!',
+            'role': 'student'
         })
         # Check redirect to student dashboard
         self.assertRedirects(response, reverse('voting_app:student_dashboard'))
@@ -244,7 +246,8 @@ class CampusVoteAuthenticationTests(TestCase):
         # Admin logs in with email (case insensitive)
         response = self.client.post(reverse('voting_app:login'), {
             'email': 'JANE@college.edu',
-            'password': 'AdminPassword123!'
+            'password': 'AdminPassword123!',
+            'role': 'admin'
         })
         self.assertRedirects(response, reverse('voting_app:admin_dashboard'))
 
@@ -252,9 +255,32 @@ class CampusVoteAuthenticationTests(TestCase):
         # Admin logs in with username
         response = self.client.post(reverse('voting_app:login'), {
             'email': 'jane_admin',
-            'password': 'AdminPassword123!'
+            'password': 'AdminPassword123!',
+            'role': 'admin'
         })
         self.assertRedirects(response, reverse('voting_app:admin_dashboard'))
+
+    def test_student_login_in_admin_console_blocked(self):
+        # Student tries to login via admin console (role='admin')
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'john@college.edu',
+            'password': 'SecurePassword123!',
+            'role': 'admin'
+        })
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("Student accounts are not authorized to access the Admin Console." in str(m) for m in messages))
+
+    def test_admin_login_in_student_portal_blocked(self):
+        # Admin tries to login via student portal (role='student')
+        response = self.client.post(reverse('voting_app:login'), {
+            'email': 'jane_admin',
+            'password': 'AdminPassword123!',
+            'role': 'student'
+        })
+        self.assertEqual(response.status_code, 200)
+        messages = list(response.context['messages'])
+        self.assertTrue(any("Admin accounts must login through the Admin Console." in str(m) for m in messages))
 
     def test_invalid_login_credentials(self):
         # Login with invalid password

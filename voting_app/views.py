@@ -82,6 +82,7 @@ def login_view(request):
         username_or_email = request.POST.get('email')
         password = request.POST.get('password')
         remember_me = request.POST.get('remember_me')
+        role = request.POST.get('role', 'student')
 
         if not username_or_email or not password:
             messages.error(request, "Please enter both email/username and password.")
@@ -90,6 +91,16 @@ def login_view(request):
         user = authenticate(request, username=username_or_email, password=password)
 
         if user is not None:
+            # Check user role based on selected portal console
+            if role == 'admin':
+                if not (user.is_superuser or user.role == 'admin'):
+                    messages.error(request, "Student accounts are not authorized to access the Admin Console.")
+                    return render(request, 'auth/login.html')
+            else: # role == 'student'
+                if user.is_superuser or user.role == 'admin':
+                    messages.error(request, "Admin accounts must login through the Admin Console.")
+                    return render(request, 'auth/login.html')
+
             # Check student approval
             if user.role == 'student' and not user.is_superuser:
                 try:
