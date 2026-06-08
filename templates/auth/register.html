@@ -113,14 +113,14 @@
                             <!-- Student ID -->
                             <div class="mb-3">
                                 <label for="id_student_id" class="form-label text-secondary small fw-medium">Student Registry ID Number</label>
-                                <input type="text" class="form-control form-input-custom" id="id_student_id" name="student_id" required placeholder="e.g. BCA2026-102" value="{{ form.student_id.value|default:'' }}">
+                                <input type="text" class="form-control form-input-custom" id="id_student_id" name="student_id" placeholder="e.g. BCA2026-102" value="{{ form.student_id.value|default:'' }}">
                             </div>
 
                             <!-- Course and Year -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="id_department" class="form-label text-secondary small fw-medium">Department</label>
-                                    <select class="form-select form-input-custom" id="id_department" name="department" required>
+                                    <select class="form-select form-input-custom" id="id_department" name="department">
                                         <option value="B.Sc CS" {% if form.department.value == 'B.Sc CS' %}selected{% endif %}>B.Sc CS</option>
                                         <option value="BCA" {% if form.department.value == 'BCA' %}selected{% endif %}>BCA</option>
                                         <option value="Commerce" {% if form.department.value == 'Commerce' %}selected{% endif %}>Commerce</option>
@@ -129,7 +129,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="id_year" class="form-label text-secondary small fw-medium">Academic Year</label>
-                                    <select class="form-select form-input-custom" id="id_year" name="year" required>
+                                    <select class="form-select form-input-custom" id="id_year" name="year">
                                         <option value="1st Year" {% if form.year.value == '1st Year' %}selected{% endif %}>1st Year</option>
                                         <option value="2nd Year" {% if form.year.value == '2nd Year' %}selected{% endif %}>2nd Year</option>
                                         <option value="3rd Year" {% if form.year.value == '3rd Year' %}selected{% endif %}>3rd Year</option>
@@ -194,8 +194,18 @@
             }
         });
 
-        // Form submission loading state
+        // Form submission loading state and Step 2 validation
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            const studentId = document.getElementById('id_student_id').value.trim();
+            const department = document.getElementById('id_department').value.trim();
+            const year = document.getElementById('id_year').value.trim();
+
+            if (!studentId || !department || !year) {
+                e.preventDefault();
+                alert('Please fill out all campus registry fields.');
+                return;
+            }
+
             const btn = document.getElementById('btnSubmitForm');
             if (btn) {
                 setTimeout(() => { btn.disabled = true; }, 0);

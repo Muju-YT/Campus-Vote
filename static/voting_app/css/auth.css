@@ -57,6 +57,7 @@
     position: relative;
     overflow: hidden;
     width: 100%;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .form-step-slide {

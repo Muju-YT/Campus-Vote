@@ -27,6 +27,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Dynamic height adjustment for step-form-slider
+        setTimeout(() => {
+            const activeSlide = slides[currentStep];
+            if (activeSlide) {
+                const slider = signupForm.querySelector('.step-form-slider');
+                if (slider) {
+                    slider.style.height = activeSlide.offsetHeight + 'px';
+                }
+            }
+        }, 50);
+
         // Update progress indicators
         nodes.forEach((node, idx) => {
             if (idx < currentStep) {
